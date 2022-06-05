@@ -1,100 +1,102 @@
+import pyqtgraph as pg
+from PyQt5.QtGui import QPen, QColor
+from PyQt5 import QtCore, QtWidgets, uic
+from PyQt5.QtWidgets import QFileDialog
+import sys, time, math, os
+from loaded_file_parsing import get_columns, get_data
 
 
-from PyQt5 import QtCore, QtWidgets, QtGui
-from pyqtgraph import PlotWidget
-from PyQt5 import uic
-import sys, time, math
- 
+#QtWidgets.QCheckBox.checkState()
+
 class OfflinePlotter(QtWidgets.QMainWindow):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
-        self.ui = uic.loadUi("offline_plotter.ui",self)
+        self.ui = uic.loadUi("offline_plotter_bmi.ui", self)
  
         # THREADS CONTAINER
+        #https://www.youtube.com/watch?v=k5tIk7w50L4&t=4s
         self.thread={}
 
+        # BUTTON CONNECTION
+        self.load_file_button.clicked.connect(self.load_file)
+        self.plot_button.clicked.connect(self.plot)
 
-        # GRAPH DATA AND PARAMS
-        self.resolution = 100
-        interval = 100
-        #self.x = [i/self.resolution for i in range(1,int(interval*self.resolution))]
-        self.x = [i for i in range(1,interval)]
+        self.graphicsView.showGrid(True,True)
 
-        self.y = [math.sin(i) for i in self.x]
-        self.offset_step = 10
+        self.comboBoxes = [
+            self.comboBox,
+            self.comboBox_2,
+            self.comboBox_3,
+            self.comboBox_4,
+            self.comboBox_5,
+            self.comboBox_6,
+            self.comboBox_7,
+            self.comboBox_8,
+        ]
 
-        # PLOTTING COMMAND
-        self.graphicsView.plot(self.x,self.y)
+        self.checkBoxes = [
+            self.checkBox,
+            self.checkBox_2,
+            self.checkBox_3,
+            self.checkBox_4,
+            self.checkBox_5,
+            self.checkBox_6,
+            self.checkBox_7,
+            self.checkBox_8
+        ]
 
-        # threaded function button
-        self.play_button.clicked.connect(self.play_thread)
-        self.pause_button.clicked.connect(self.pause_thread)
-
-
-        # normal function button
-        self.forward_button.clicked.connect(self.draw_next)
-        self.back_button.clicked.connect(self.draw_previous)
-    
+        self.colors = [
+            (224, 27, 36),
+            (26, 95, 180),
+            (38, 162, 105),
+            (246, 211, 45),
+            (255, 120, 0),
+            (145, 65, 172),
+            (14, 255, 0),
+            (71, 195, 167)
+        ]
 
 
     # NORMAL FUNCTIONS
-    def draw_next(self):
+    def load_file(self):
+        options = QFileDialog.Options()
+        self.file_name = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileNames()","Load a file",
+                    "csv File (*.csv);;All Files (*)", options=options)[0]
 
-        print(f"x:{self.x}\ny:{self.y}")
+        self.loaded_file_name.setText(self.file_name)
+
+        columns = get_columns(self.file_name)
+
+        for n, i in enumerate(columns):
+                self.comboBoxes[n].addItems(columns)
+                self.comboBoxes[n].itemText(n)
+
+
+        self.data_2 = get_data(self.file_name, columns[1])
+
+
+    def plot(self):
         self.graphicsView.clear()
-        self.update_xy()
-        self.graphicsView.plot(self.x,self.y)
+        for n in range(len(self.comboBoxes)):
+            if self.checkBoxes[n].checkState():
 
-        
+                signal = self.comboBoxes[n].currentText()
+                print(signal)
+                self.data = get_data(self.file_name, signal)
+                y = []
 
-    def draw_previous(self):
-
-        print(f"x:{self.x}\ny:{self.y}")
-        self.graphicsView.clear()
-        self.downdate_xy()
-        self.graphicsView.plot(self.x,self.y)
-        
-    def update_xy(self):
-
-        self.xy_counter=self.x[-1]
-
-        # append new x and y element adjusted by self.offset_step
-        self.x.append(int(self.xy_counter + self.offset_step / self.resolution))
-        self.y.append(math.sin(self.x[-1]))
-        self.xy_counter+= 1
-
-        # add self.offset_step to all values in the self.x list
-        self.x = [i+self.offset_step for i in self.x.copy()]
-
-        # update self.y
-        self.y = [math.sin(i) for i in self.x]
-
-        # pop first element of x and y
-        self.x.pop(0)       
-        self.y.pop(0) 
-
-
-    def downdate_xy(self):
-
-        self.xy_rev_counter=self.x[0]
-
-        # append first x and y element adjusted by self.offset_step
-        self.x.insert(0,self.xy_rev_counter-self.offset_step/self.resolution)
-        self.y.insert(0,math.sin(self.x[0]))
-
-        # decide how much every new element should increase
-        self.xy_rev_counter-= 1
-
-        # update all values in the self.x list
-        self.x = [i-self.offset_step for i in self.x.copy()]
-
-         # update self.y
-        self.y = [math.sin(i) for i in self.x]
-
-        # pop latest element of x and y
-        self.x.pop(-1)       
-        self.y.pop(-1) 
-
+                for i in self.data:
+                    y.append(i)
+                #print(y)
+                color = QColor(
+                    self.colors[n][0],
+                    self.colors[n][1],
+                    self.colors[n][2],
+                )
+                pen = pg.mkPen(color, width=1)
+                self.graphicsView.plot(y, pen=pen)
+            else:
+                print("checkbox not clicked")
 
     # THREAD FUNCTIONS
     def play_thread(self):
