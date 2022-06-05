@@ -59,6 +59,7 @@ class OfflinePlotter(QtWidgets.QMainWindow):
 
     # NORMAL FUNCTIONS
     def load_file(self):
+        print(type(self))
         options = QFileDialog.Options()
         self.file_name = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileNames()","Load a file",
                     "csv File (*.csv);;All Files (*)", options=options)[0]
