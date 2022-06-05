@@ -6,8 +6,10 @@
       pip install pyqt5==5.15.6
       pip install pyqtgraph==0.12.4
       pip install pandas==1.4.2
+--------------- --------
 
-Package         Version
+# Package         Version
+
 --------------- --------
 - numpy           1.22.4
 - pandas          1.4.2
