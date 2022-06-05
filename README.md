@@ -1,6 +1,9 @@
 # Oflline_Plotter_BMI
 
-
+  Installing dependencies:
+    pip install pyqt5==5.15.6
+    pip install pyqtgraph==0.12.4
+    pip install pandas==1.4.2
 
 Package         Version
 --------------- --------
