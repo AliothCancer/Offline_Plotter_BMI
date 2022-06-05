@@ -1,7 +1,7 @@
-# Oflline_Plotter_BMI
+# Installing dependencies
 
 
-  Installing dependencies:
+  
   
       pip install pyqt5==5.15.6
       pip install pyqtgraph==0.12.4
