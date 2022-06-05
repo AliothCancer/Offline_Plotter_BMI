@@ -85,7 +85,7 @@ class OfflinePlotter(QtWidgets.QMainWindow):
             for i in range(columns_num):
                 self.comboBoxes[n].addItem(columns[i])
 
-            self.comboBoxes[n].itemText(n)
+            self.comboBoxes[n].itemText(n+1)
 
         self.data_2 = get_data(self.file_name, columns[1])
 
