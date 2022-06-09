@@ -120,7 +120,6 @@ class OfflinePlotter(QtWidgets.QMainWindow):
 
     def plot(self):
         for n in range(len(self.comboBoxes)):
-            #print(self.comboBoxes[n].currentText, self.comboBoxes[n].currentIndex())
             if self.checkBoxes[n].checkState():
                 column = self.comboBoxes[n].currentText()
                 #print(column)
