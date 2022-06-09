@@ -609,6 +609,12 @@
             </item>
             <item>
              <widget class="QSlider" name="scroll_velocity_slider">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
               <property name="value">
                <number>1</number>
               </property>
@@ -653,7 +659,10 @@
                <number>5</number>
               </property>
               <property name="maximum">
-               <number>200</number>
+               <number>2000</number>
+              </property>
+              <property name="value">
+               <number>100</number>
               </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>

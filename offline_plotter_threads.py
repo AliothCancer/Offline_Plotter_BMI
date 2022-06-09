@@ -1,3 +1,4 @@
+import pyqtgraph
 import pyqtgraph as pg
 from PyQt5.QtGui import QPen, QColor
 from PyQt5 import QtCore, QtWidgets, uic
@@ -109,6 +110,7 @@ class OfflinePlotter(QtWidgets.QMainWindow):
             new_value = slider.value()
             self.sliders[slider].setText(str(new_value))
 
+
     def show_all_signals(self, QCheckBox):
         for i in self.checkBoxes:
             if i.isChecked() == False:
@@ -124,6 +126,7 @@ class OfflinePlotter(QtWidgets.QMainWindow):
         try:
             self.current_file_name = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileNames()","Load a file",
                         "csv File (*.csv);;All Files (*)", options=options)[0]
+
             exit_load_file = False
             if self.current_file_name in self.files.keys():
                 msg = QMessageBox()
@@ -133,7 +136,7 @@ class OfflinePlotter(QtWidgets.QMainWindow):
 
                 exit_load_file = True
 
-        except FileNotFoundError:
+        except FileNotFoundError or KeyError:
             msg = QMessageBox()
             msg.setWindowTitle("::FileNotFoundError::")
             msg.setText("!!!")
@@ -153,12 +156,19 @@ class OfflinePlotter(QtWidgets.QMainWindow):
         self.current_file_name = self.comboBox_files.currentText()
         print(self.current_file_name)
         for n in range(len(self.comboBoxes)):
-            if self.checkBoxes[n].checkState():
+            if self.checkBoxes[n].checkState() and self.comboBoxes[n].count() != 0:
                 self.y = []
                 column = self.comboBoxes[n].currentText()
+
                 #print(column)
                 self.data = get_data(self.current_file_name, column)
 
+                # adjusting sliders size based on data length
+
+                max_length = len(self.data)
+                self.scroll_velocity_slider.setMaximum(int(max_length*0.05))
+                self.values_quantity_slider.setMaximum(int(max_length*0.8))
+                    #QtWidgets.QSlider.setMaximum()
 
                 for i in self.data:
                     self.y.append(i)
@@ -242,7 +252,9 @@ class OfflinePlotter(QtWidgets.QMainWindow):
 
             end_value = self.init_value + intervall_lenght
             self.graphicsView.setXRange(self.init_value, end_value)
-            self.init_value += int(self.scroll_velocity_label.text())
+            self.init_value += int(self.scroll_velocity_label.text())/ 10
+            self.graphicsView.plot(self.graph.yData)
+            #pyqtgraph.PlotDataItem.
 
     def pause_thread(self):
         self.thread[1].stop()

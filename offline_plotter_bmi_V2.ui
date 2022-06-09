@@ -163,7 +163,7 @@
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <property name="font">
@@ -628,6 +628,15 @@
             </item>
             <item>
              <widget class="QSlider" name="scroll_velocity_slider">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="singleStep">
+               <number>1</number>
+              </property>
               <property name="value">
                <number>1</number>
               </property>
@@ -673,6 +682,9 @@
               </property>
               <property name="maximum">
                <number>200</number>
+              </property>
+              <property name="value">
+               <number>100</number>
               </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
