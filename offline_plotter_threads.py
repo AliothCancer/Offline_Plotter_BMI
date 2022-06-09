@@ -139,6 +139,9 @@ class OfflinePlotter(QtWidgets.QMainWindow):
                 pen = pg.mkPen(color, width=1)
                 self.graphicsView.plot( y, pen=pen)
 
+                self.graphicsView.setAutoVisible(y=1)
+                self.graphicsView.setAutoVisible(x=1)
+                #self.graphicsView.enableAutoRange(axis='y', enable=True)
             else:
                 print("checkbox not clicked")
 
