@@ -44,6 +44,19 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="clear_graph_button">
+        <property name="font">
+         <font>
+          <family>URW Gothic</family>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Clear graph</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer_4">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -76,15 +89,12 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="loaded_file_name">
-        <property name="font">
-         <font>
-          <family>URW Gothic</family>
-          <pointsize>14</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>None</string>
+       <widget class="QComboBox" name="comboBox_files">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
        </widget>
       </item>
@@ -245,7 +255,14 @@
           </widget>
          </item>
          <item row="3" column="8">
-          <widget class="QComboBox" name="comboBox_6"/>
+          <widget class="QComboBox" name="comboBox_6">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
          <item row="2" column="7" alignment="Qt::AlignHCenter">
           <widget class="QCheckBox" name="checkBox_5">
@@ -333,10 +350,24 @@
           </widget>
          </item>
          <item row="4" column="8">
-          <widget class="QComboBox" name="comboBox_7"/>
+          <widget class="QComboBox" name="comboBox_7">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
          <item row="5" column="8">
-          <widget class="QComboBox" name="comboBox_8"/>
+          <widget class="QComboBox" name="comboBox_8">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
          <item row="5" column="7" alignment="Qt::AlignHCenter">
           <widget class="QCheckBox" name="checkBox_8">
@@ -401,10 +432,24 @@
           </widget>
          </item>
          <item row="2" column="8">
-          <widget class="QComboBox" name="comboBox_5"/>
+          <widget class="QComboBox" name="comboBox_5">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
          <item row="5" column="2">
-          <widget class="QComboBox" name="comboBox_4"/>
+          <widget class="QComboBox" name="comboBox_4">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
          <item row="2" column="0" alignment="Qt::AlignHCenter">
           <widget class="QCheckBox" name="checkBox">
@@ -449,7 +494,14 @@
           </spacer>
          </item>
          <item row="2" column="2">
-          <widget class="QComboBox" name="comboBox"/>
+          <widget class="QComboBox" name="comboBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
          <item row="5" column="0" alignment="Qt::AlignHCenter">
           <widget class="QCheckBox" name="checkBox_4">
@@ -504,10 +556,24 @@
           </widget>
          </item>
          <item row="3" column="2">
-          <widget class="QComboBox" name="comboBox_2"/>
+          <widget class="QComboBox" name="comboBox_2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
          <item row="4" column="2">
-          <widget class="QComboBox" name="comboBox_3"/>
+          <widget class="QComboBox" name="comboBox_3">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
          <item row="5" column="12">
           <spacer name="horizontalSpacer_2">

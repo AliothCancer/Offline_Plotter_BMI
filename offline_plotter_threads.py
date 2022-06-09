@@ -2,9 +2,11 @@ import pyqtgraph as pg
 from PyQt5.QtGui import QPen, QColor
 from PyQt5 import QtCore, QtWidgets, uic
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QMessageBox
 import sys, time
 from loaded_file_parsing import get_columns, get_data
 
+#QtWidgets.QComboBox.activated
 
 #QtWidgets.QComboBox.setItemText()
 
@@ -20,11 +22,26 @@ class OfflinePlotter(QtWidgets.QMainWindow):
         #https://www.youtube.com/watch?v=k5tIk7w50L4&t=4s
         self.thread={}
 
+        self.comboBox_files.addItem("None")
+
         # BUTTON CONNECTION
         self.load_file_button.clicked.connect(self.load_file)
         self.plot_button.clicked.connect(self.plot)
+        self.clear_graph_button.clicked.connect(self.clear_graph)
 
+        # comboBox_files signal connection
+        self.comboBox_files.currentIndexChanged.connect(self.update_comboBox_options)
+
+        # show grid on ptqtgraph graph x,y
         self.graphicsView.showGrid(True,True)
+
+        # self.files will contains file names as keys and lists of str column names as values
+        # self.files = {
+        #      file_name: [column1,column2,...]}
+        self.files = {}
+        self.data = None
+        self.current_file_name = None
+
 
         self.comboBoxes = [
             self.comboBox,
@@ -34,7 +51,7 @@ class OfflinePlotter(QtWidgets.QMainWindow):
             self.comboBox_5,
             self.comboBox_6,
             self.comboBox_7,
-            self.comboBox_8,
+            self.comboBox_8
         ]
 
         self.checkBoxes = [
@@ -70,38 +87,47 @@ class OfflinePlotter(QtWidgets.QMainWindow):
             else:
                 i.setChecked(False)
 
+
     def load_file(self):
-        print(type(self))
+        # getting the file name
         options = QFileDialog.Options()
-        self.file_name = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileNames()","Load a file",
-                    "csv File (*.csv);;All Files (*)", options=options)[0]
 
-        self.loaded_file_name.setText(self.file_name)
+        try:
+            self.current_file_name = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileNames()","Load a file",
+                        "csv File (*.csv);;All Files (*)", options=options)[0]
+            exit_load_file = False
+            if self.current_file_name in self.files.keys():
+                msg = QMessageBox()
+                msg.setWindowTitle("Action not allowed")
+                msg.setText("This file is already loaded")
+                msg.exec_()
 
-        columns = get_columns(self.file_name)
+                exit_load_file = True
 
-        columns_num = len(columns)
-        for n in range(columns_num):
-            for i in range(columns_num):
-                self.comboBoxes[n].addItem(columns[i])
+        except FileNotFoundError:
+            msg = QMessageBox()
+            msg.setWindowTitle("::FileNotFoundError::")
+            msg.setText("!!!")
+            msg.exec_()
+            exit_load_file = True
 
-            self.comboBoxes[n].itemText(n+1)
+        if not exit_load_file:
+            self.update_comboBox_options()
 
-        self.data_2 = get_data(self.file_name, columns[1])
-
-
-    def plot(self):
+    def clear_graph(self):
         self.graphicsView.clear()
 
+    def plot(self):
+
+
         for n in range(len(self.comboBoxes)):
-            print(self.comboBoxes[n].currentText, self.comboBoxes[n].currentIndex())
+            #print(self.comboBoxes[n].currentText, self.comboBoxes[n].currentIndex())
             if self.checkBoxes[n].checkState():
-                signal = self.comboBoxes[n].currentText()
-                print(signal)
-                self.data = get_data(self.file_name, signal)
+                column = self.comboBoxes[n].currentText()
+                #print(column)
+                self.data = get_data(self.current_file_name, column)
 
                 y = []
-
                 for i in self.data:
                     y.append(i)
                 #print(y)
@@ -111,9 +137,50 @@ class OfflinePlotter(QtWidgets.QMainWindow):
                     self.colors[n][2],
                 )
                 pen = pg.mkPen(color, width=1)
-                self.graphicsView.plot(y, pen=pen)
+                self.graphicsView.plot( y, pen=pen)
+
             else:
                 print("checkbox not clicked")
+
+    def delete_all_comboBox_items(self):
+        for combo in self.comboBoxes:
+            combo.clear()
+
+    def update_comboBox_options(self):
+        # delete all comboBox items
+        self.delete_all_comboBox_items()
+
+
+        # adding filename and columns to self.files dict
+        #print(self.current_file_name)
+        columns = get_columns(self.current_file_name)
+        self.files[self.current_file_name] = columns
+
+        # adding the file name to the files combobox
+        for n, file_name in enumerate(self.files):
+            if n == 0:
+                self.comboBox_files.setItemText(n,file_name)
+            elif self.comboBox_files.count() == len(self.files):
+                pass
+            else:
+                self.comboBox_files.addItem(file_name)
+
+
+        # print(self.files)
+        # columns_num = len(columns)
+
+        # adding all columns of all loaded files
+        # self.files = {
+        #      file_name: [column1,column2,...]}
+
+        self.update_selected_file()
+
+        for comboBox in self.comboBoxes:
+            comboBox.addItems(self.files[self.current_file_name])
+
+
+    def update_selected_file(self):
+        self.current_file_name = self.comboBox_files.currentText()
 
     # THREAD FUNCTIONS
     def play_thread(self):
