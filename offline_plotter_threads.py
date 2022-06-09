@@ -24,10 +24,27 @@ class OfflinePlotter(QtWidgets.QMainWindow):
 
         self.comboBox_files.addItem("None")
 
+        # SLIDER CONNECTION
+        self.sliders = {
+            self.scroll_velocity_slider: self.scroll_velocity_label,
+            self.values_quantity_slider: self.values_quantity_label
+        }
+        for slider in self.sliders:
+            slider.valueChanged.connect(self.update_sliders)
+
+
+        # LABEL
+        self.scroll_velocity_label.setText(str(self.scroll_velocity_slider.value()))
+        self.values_quantity_label.setText(str(self.values_quantity_slider.value()))
+        #QtWidgets.QLabel.setText()
+
+
         # BUTTON CONNECTION
         self.load_file_button.clicked.connect(self.load_file)
         self.plot_button.clicked.connect(self.plot)
         self.clear_graph_button.clicked.connect(self.clear_graph)
+        self.play_button.clicked.connect(self.play_thread)
+        self.pause_button.clicked.connect(self.pause_thread)
 
         # comboBox_files signal connection
         self.comboBox_files.currentIndexChanged.connect(self.update_comboBox_options)
@@ -38,10 +55,15 @@ class OfflinePlotter(QtWidgets.QMainWindow):
         # self.files will contains file names as keys and lists of str column names as values
         # self.files = {
         #      file_name: [column1,column2,...]}
+        # VARIABLES
         self.files = {}
         self.data = None
         self.current_file_name = None
+        self.graph = None
 
+        #self.x_scroll = []
+        self.y = []
+        self.init_value = 0
 
         self.comboBoxes = [
             self.comboBox,
@@ -53,6 +75,8 @@ class OfflinePlotter(QtWidgets.QMainWindow):
             self.comboBox_7,
             self.comboBox_8
         ]
+
+
 
         self.checkBoxes = [
             self.checkBox,
@@ -80,6 +104,11 @@ class OfflinePlotter(QtWidgets.QMainWindow):
 
 
     # NORMAL FUNCTIONS
+    def update_sliders(self):
+        for slider in self.sliders:
+            new_value = slider.value()
+            self.sliders[slider].setText(str(new_value))
+
     def show_all_signals(self, QCheckBox):
         for i in self.checkBoxes:
             if i.isChecked() == False:
@@ -115,19 +144,24 @@ class OfflinePlotter(QtWidgets.QMainWindow):
             self.update_comboBox_options()
 
     def clear_graph(self):
+        self.y = []
         self.graphicsView.clear()
-
+        self.graph = None
 
     def plot(self):
+
+        self.current_file_name = self.comboBox_files.currentText()
+        print(self.current_file_name)
         for n in range(len(self.comboBoxes)):
             if self.checkBoxes[n].checkState():
+                self.y = []
                 column = self.comboBoxes[n].currentText()
                 #print(column)
                 self.data = get_data(self.current_file_name, column)
 
-                y = []
+
                 for i in self.data:
-                    y.append(i)
+                    self.y.append(i)
                 #print(y)
                 color = QColor(
                     self.colors[n][0],
@@ -135,7 +169,7 @@ class OfflinePlotter(QtWidgets.QMainWindow):
                     self.colors[n][2],
                 )
                 pen = pg.mkPen(color, width=1)
-                self.graphicsView.plot( y, pen=pen)
+                self.graph = self.graphicsView.plot( self.y, pen=pen)
 
                 self.graphicsView.setAutoVisible(y=1)
                 self.graphicsView.setAutoVisible(x=1)
@@ -168,30 +202,48 @@ class OfflinePlotter(QtWidgets.QMainWindow):
                 self.comboBox_files.addItem(file_name)
 
 
-        # print(self.files)
-        # columns_num = len(columns)
 
-        # adding all columns of all loaded files
+        # adding all columns of loaded files
         # self.files = {
         #      file_name: [column1,column2,...]}
-
         self.update_selected_file()
+        for n, comboBox in enumerate(self.comboBoxes):
+            for k, item in enumerate(self.files[self.current_file_name]):
+                if k == n:
+                    comboBox.addItem(item)
+
+
 
         for comboBox in self.comboBoxes:
-            comboBox.addItems(self.files[self.current_file_name])
-
+            for item in self.files[self.current_file_name]:
+                if comboBox.currentText() != item:
+                    comboBox.addItem(item)
 
     def update_selected_file(self):
         self.current_file_name = self.comboBox_files.currentText()
 
+    # AUTOMATIC GRAPH SCROLLER
     # THREAD FUNCTIONS
     def play_thread(self):
         self.thread[1] = ThreadClass(parent=None,index=1)
         self.thread[1].start()
         self.thread[1].any_signal.connect(self.my_function)
         self.play_button.setEnabled(False)
-	
-	
+
+    def play(self):
+
+        self.graphicsView.clear()
+
+        #self.update_xy()
+        if self.graph != None:
+            #self.graph.setYRange(min(self.y), max(self.y))
+            intervall_lenght = int(self.values_quantity_label.text())
+            #QtWidgets.QLabel.text()
+
+            end_value = self.init_value + intervall_lenght
+            self.graphicsView.setXRange(self.init_value, end_value)
+            self.init_value += int(self.scroll_velocity_label.text())
+
     def pause_thread(self):
         self.thread[1].stop()
         self.play_button.setEnabled(True)
@@ -201,14 +253,8 @@ class OfflinePlotter(QtWidgets.QMainWindow):
     def my_function(self):
         index = self.sender().index
         if index==1: # play
-            self.graphicsView.clear()
-            self.update_xy()
-            self.graphicsView.plot(self.x,self.y)
-        
-    
-    
+            self.play()
 
-        
 
 class ThreadClass(QtCore.QThread):
 
@@ -229,6 +275,7 @@ class ThreadClass(QtCore.QThread):
                 cnt = 0
             time.sleep(0.1)
             self.any_signal.emit(cnt)
+
     def stop(self):
         self.is_running = False
         print('Stopping thread...', self.index)
