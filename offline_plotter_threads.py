@@ -117,9 +117,8 @@ class OfflinePlotter(QtWidgets.QMainWindow):
     def clear_graph(self):
         self.graphicsView.clear()
 
+
     def plot(self):
-
-
         for n in range(len(self.comboBoxes)):
             #print(self.comboBoxes[n].currentText, self.comboBoxes[n].currentIndex())
             if self.checkBoxes[n].checkState():
@@ -141,17 +140,18 @@ class OfflinePlotter(QtWidgets.QMainWindow):
 
                 self.graphicsView.setAutoVisible(y=1)
                 self.graphicsView.setAutoVisible(x=1)
-                #self.graphicsView.enableAutoRange(axis='y', enable=True)
+                self.graphicsView.enableAutoRange(axis='y', enable=True)
+                self.graphicsView.enableAutoRange(axis='x', enable=True)
             else:
                 print("checkbox not clicked")
 
-    def delete_all_comboBox_items(self):
+    def delete_all_comboBoxes_items(self):
         for combo in self.comboBoxes:
             combo.clear()
 
     def update_comboBox_options(self):
         # delete all comboBox items
-        self.delete_all_comboBox_items()
+        self.delete_all_comboBoxes_items()
 
 
         # adding filename and columns to self.files dict
