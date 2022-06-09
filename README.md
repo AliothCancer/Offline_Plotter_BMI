@@ -1,3 +1,9 @@
+# Preview
+https://github.com/AliothCancer/Offline_Plotter_BMI/blob/main/image_2022-06-10_00-42-19.png
+
+
+
+
 # Installing dependencies
 
 
