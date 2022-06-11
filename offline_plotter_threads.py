@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QMessageBox
 import sys, time
 from loaded_file_parsing import get_columns, get_data
-
+import platform
 #QtWidgets.QComboBox.activated
 
 #QtWidgets.QComboBox.setItemText()
@@ -39,6 +39,9 @@ class OfflinePlotter(QtWidgets.QMainWindow):
         self.values_quantity_label.setText(str(self.values_quantity_slider.value()))
         #QtWidgets.QLabel.setText()
 
+        self.scrolling_slider.valueChanged.connect(self.update_scrolling)
+        self.values_quantity_slider.valueChanged.connect(self.update_zoom)
+
 
         # BUTTON CONNECTION
         self.load_file_button.clicked.connect(self.load_file)
@@ -57,10 +60,14 @@ class OfflinePlotter(QtWidgets.QMainWindow):
         # self.files = {
         #      file_name: [column1,column2,...]}
         # VARIABLES
+        self.play_isRunning = False
         self.files = {}
-        self.data = None
-        self.current_file_name = None
-        self.graph = None
+        self.data = []
+        self.current_file_name = ""
+        self.graphs = []
+        self.pens = []
+        self.file_and_columns_plotted = {}
+        self.pen_width = 3
 
         #self.x_scroll = []
         self.y = []
@@ -91,6 +98,8 @@ class OfflinePlotter(QtWidgets.QMainWindow):
         ]
 
         self.checkBox_9.stateChanged.connect(lambda: self.show_all_signals(self.checkBox_9))
+
+
 
         self.colors = [
             (224, 27, 36),  # signal1
@@ -124,8 +133,8 @@ class OfflinePlotter(QtWidgets.QMainWindow):
         options = QFileDialog.Options()
 
         try:
-            self.current_file_name = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileNames()","Load a file",
-                        "csv File (*.csv);;All Files (*)", options=options)[0]
+            self.current_file_name = repr(QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileNames()","Load a file",
+                        "csv File (*.csv);;All Files (*)", options=options)[0]).strip("'")
 
             exit_load_file = False
             if self.current_file_name in self.files.keys():
@@ -149,23 +158,35 @@ class OfflinePlotter(QtWidgets.QMainWindow):
     def clear_graph(self):
         self.y = []
         self.graphicsView.clear()
-        self.graph = None
+        self.graphs = []
+        self.pens = []
+        self.init_value = 0
+        self.file_and_columns_plotted.clear()
+        self.signals_listWidget.clear()
 
     def plot(self):
 
         self.current_file_name = self.comboBox_files.currentText()
         print(self.current_file_name)
+
+        if self.current_file_name not in self.file_and_columns_plotted.keys():
+            self.file_and_columns_plotted[self.current_file_name] = []
+
+
         for n in range(len(self.comboBoxes)):
+
             if self.checkBoxes[n].checkState() and self.comboBoxes[n].count() != 0:
                 self.y = []
                 column = self.comboBoxes[n].currentText()
-
+                if column not in self.file_and_columns_plotted[self.current_file_name]:
+                    self.file_and_columns_plotted[self.current_file_name].append(column)
                 #print(column)
                 self.data = get_data(self.current_file_name, column)
 
                 # adjusting sliders size based on data length
 
                 max_length = len(self.data)
+                self.scrolling_slider.setMaximum(max_length)
                 self.scroll_velocity_slider.setMaximum(int(max_length*0.05))
                 self.values_quantity_slider.setMaximum(int(max_length*0.8))
                     #QtWidgets.QSlider.setMaximum()
@@ -178,14 +199,38 @@ class OfflinePlotter(QtWidgets.QMainWindow):
                     self.colors[n][1],
                     self.colors[n][2],
                 )
-                pen = pg.mkPen(color, width=1)
-                self.graph = self.graphicsView.plot( self.y, pen=pen)
+                self.pen_width = self.pen_width_slider.value()
+                pen = pg.mkPen(color, width=self.pen_width)
+                self.graphs.append(self.graphicsView.plot( self.y, pen=pen))
+                self.pens.append(pen)
 
                 self.graphicsView.setAutoVisible(y=1)
                 self.graphicsView.setAutoVisible(x=1)
                 self.graphicsView.enableAutoRange(axis='y', enable=True)
                 self.graphicsView.enableAutoRange(axis='x', enable=True)
+
+                self.signals_listWidget.clear()
+                for file_name in self.file_and_columns_plotted:
+
+                    plotted_columns = str(self.file_and_columns_plotted[file_name])
+
+                    match platform.uname()[0]:
+                        case "Linux" | "Darwin":
+                            item = file_name.split("/")[-1] + ": " + plotted_columns
+                        case "Windows":
+                            item = file_name.split("\\")[-1] + ": " + plotted_columns
+
+                    if file_name == self.comboBox_files.currentText():
+                        self.signals_listWidget.addItem(item)
+
+                    else:
+                        self.signals_listWidget.addItem(item)
+
             else:
+                try:
+                    self.file_and_columns_plotted[self.current_file_name].remove(self.comboBoxes[n].currentText())
+                except ValueError:
+                    pass
                 print("checkbox not clicked")
 
     def delete_all_comboBoxes_items(self):
@@ -230,33 +275,85 @@ class OfflinePlotter(QtWidgets.QMainWindow):
                     comboBox.addItem(item)
 
     def update_selected_file(self):
-        self.current_file_name = self.comboBox_files.currentText()
+        self.current_file_name = repr(self.comboBox_files.currentText()).strip("'")
 
     # AUTOMATIC GRAPH SCROLLER
     # THREAD FUNCTIONS
     def play_thread(self):
+        self.play_isRunning = True
         self.thread[1] = ThreadClass(parent=None,index=1)
         self.thread[1].start()
         self.thread[1].any_signal.connect(self.my_function)
         self.play_button.setEnabled(False)
 
-    def play(self):
 
+    def update_scrolling(self):
+        #self.pause_thread()
+        if self.play_isRunning:
+            self.init_value = self.scrolling_slider.value() - self.values_quantity_slider.value()
+        else:
+            self.init_value = self.scrolling_slider.value() - self.values_quantity_slider.value()
+            intervall_lenght = int(self.values_quantity_label.text())
+            # QtWidgets.QLabel.text()
+
+            end_value = self.init_value + intervall_lenght
+            print(self.init_value)
+            self.graphicsView.setXRange(self.init_value, end_value)
+            self.scrolling_slider.setValue(int(self.init_value + self.values_quantity_slider.value()))
+            self.pen_width = self.pen_width_slider.value()
+
+            for n, graph in enumerate(self.graphs):
+                self.graphicsView.plot(graph.yData, pen=self.pens[n])
+        #self.play_thread()
+
+    def update_zoom(self):
+        #self.scrolling_slider.setMinimum(self.scrolling_slider.value())
+
+
+        intervall_lenght = int(self.values_quantity_label.text())
+        # QtWidgets.QLabel.text()
+
+        end_value = self.init_value + intervall_lenght
+
+
+        self.graphicsView.setXRange(self.init_value, end_value)
+        self.scrolling_slider.setValue(int(self.init_value + self.values_quantity_slider.value()))
+        self.pen_width = self.pen_width_slider.value()
+
+        for n, graph in enumerate(self.graphs):
+            self.graphicsView.plot(graph.yData, pen=self.pens[n])
+
+    def play(self):
         self.graphicsView.clear()
 
+
         #self.update_xy()
-        if self.graph != None:
+        if self.graphs != []:
             #self.graph.setYRange(min(self.y), max(self.y))
             intervall_lenght = int(self.values_quantity_label.text())
             #QtWidgets.QLabel.text()
 
+
             end_value = self.init_value + intervall_lenght
+
             self.graphicsView.setXRange(self.init_value, end_value)
-            self.init_value += int(self.scroll_velocity_label.text())/ 10
-            self.graphicsView.plot(self.graph.yData)
-            #pyqtgraph.PlotDataItem.
+            self.init_value += int(self.scroll_velocity_label.text())*0.15
+            self.scrolling_slider.setValue(int(self.init_value + self.values_quantity_slider.value()))
+            self.pen_width = self.pen_width_slider.value()
+
+            for n, graph in enumerate(self.graphs):
+                self.graphicsView.plot(graph.yData, pen=self.pens[n])
+
+                #pyqtgraph.PlotDataItem.
+            if self.init_value + self.values_quantity_slider.value() >= self.scrolling_slider.maximum():
+                self.pause_thread()
+                self.init_value = 0
+
+
+
 
     def pause_thread(self):
+        self.play_isRunning = False
         self.thread[1].stop()
         self.play_button.setEnabled(True)
     
