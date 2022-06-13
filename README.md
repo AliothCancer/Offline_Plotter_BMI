@@ -2,14 +2,15 @@
 ![alt text](https://github.com/AliothCancer/Offline_Plotter_BMI/blob/main/offline_plotter_1)
 ![alt text](https://github.com/AliothCancer/Offline_Plotter_BMI/blob/main/offline_plotter2)
 
-# Installing dependencies
+# Installationthe 
 
+Go to the folder you want to install the program, open a terminal within that folder and copy paste this:
+      
+      git clone https://github.com/AliothCancer/Offline_Plotter_BMI.git
+      cd Offline_Plotter_BMI
+      python offline_plotter_threads.py
+N.B Use python3 instead of python if python is not recognized as a command
 
-  
-  
-      pip install pyqt5==5.15.6
-      pip install pyqtgraph==0.12.4
-      pip install pandas==1.4.2
 --------------- --------
 
 # Package         Version
