@@ -205,7 +205,7 @@
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <property name="font">
@@ -820,7 +820,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>next.png</normaloff>next.png</iconset>
+                  <normaloff>../../.designer/backup/next.png</normaloff>../../.designer/backup/next.png</iconset>
                 </property>
                </widget>
               </item>
@@ -831,7 +831,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>pause.png</normaloff>pause.png</iconset>
+                  <normaloff>../../.designer/backup/pause.png</normaloff>../../.designer/backup/pause.png</iconset>
                 </property>
                </widget>
               </item>
@@ -864,7 +864,7 @@
               </property>
               <property name="icon">
                <iconset>
-                <normaloff>next-button_Rotated.png</normaloff>next-button_Rotated.png</iconset>
+                <normaloff>../../.designer/backup/next-button_Rotated.png</normaloff>../../.designer/backup/next-button_Rotated.png</iconset>
               </property>
              </widget>
             </item>
@@ -918,7 +918,7 @@
               </property>
               <property name="icon">
                <iconset>
-                <normaloff>next-button.png</normaloff>next-button.png</iconset>
+                <normaloff>../../.designer/backup/next-button.png</normaloff>../../.designer/backup/next-button.png</iconset>
               </property>
              </widget>
             </item>
