@@ -1,6 +1,6 @@
 # Preview
-![alt text](https://github.com/AliothCancer/Offline_Plotter_BMI/blob/main/offline_plotter_1)
-![alt text](https://github.com/AliothCancer/Offline_Plotter_BMI/blob/main/offline_plotter2)
+![alt text](https://github.com/AliothCancer/Offline_Plotter_BMI/blob/main/preview/offline_plotter_1)
+![alt text](https://github.com/AliothCancer/Offline_Plotter_BMI/blob/main/preview/offline_plotter_2)
 
 # Generic Installation
 
