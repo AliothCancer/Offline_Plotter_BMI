@@ -10,7 +10,7 @@ Go to the folder you want to install the program, open a terminal within that fo
       cd Offline_Plotter_BMI
       pip install -r requirements.txt
       python offline_plotter_threads.py
-N.B Use python3 instead of python if python is not recognized as a command
+N.B Use python3 instead of python if python is not recognized as a command, the for pip, use pip3 if that's the case
 
 --------------- --------
 
