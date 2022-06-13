@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QMessageBox
 import sys, time
 from loaded_file_parsing import get_columns, get_data
 import platform
+import os, sys
 #QtWidgets.QComboBox.activated
 
 #QtWidgets.QComboBox.setItemText()
@@ -14,7 +15,12 @@ import platform
 class OfflinePlotter(QtWidgets.QMainWindow):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
-        self.ui = uic.loadUi("offline_plotter_bmi.ui", self)
+
+        if getattr(sys, 'frozen', False):
+            ui_file = os.path.join(sys._MEIPASS, "offline_plotter_bmi.ui")
+        else:
+            ui_file = "offline_plotter_bmi.ui"
+        self.ui = uic.loadUi(ui_file, self)
 
         self.setWindowTitle("BMI Offline Plotter")
 
