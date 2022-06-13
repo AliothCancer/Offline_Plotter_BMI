@@ -2,7 +2,7 @@
 ![alt text](https://github.com/AliothCancer/Offline_Plotter_BMI/blob/main/offline_plotter_1)
 ![alt text](https://github.com/AliothCancer/Offline_Plotter_BMI/blob/main/offline_plotter2)
 
-# Installation
+# Generic Installation
 
 Go to the folder you want to install the program, open a terminal within that folder and copy paste this:
       
