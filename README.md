@@ -8,6 +8,7 @@ Go to the folder you want to install the program, open a terminal within that fo
       
       git clone https://github.com/AliothCancer/Offline_Plotter_BMI.git
       cd Offline_Plotter_BMI
+      pip install -r requirements.txt
       python offline_plotter_threads.py
 N.B Use python3 instead of python if python is not recognized as a command
 
