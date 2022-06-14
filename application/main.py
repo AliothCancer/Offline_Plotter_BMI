@@ -21,7 +21,7 @@ import platform
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
-        self.path_to_img = "images/"
+        self.path_to_img = ""
 
         MainWindow.setWindowTitle("BMI Offline Plotter")
         window_icon = QtGui.QIcon()
