@@ -1,6 +1,18 @@
+# Installation from release
+Download the archive in the release section for your OS, available platforms:
+- Linux_x86_64
+- Windows amd64
+
+Once you downloaded the archive, extract it and launch main.exe on windows or the binary main on linux.
+
+Note: The images in the archive must be in the same folder to make the program load the pause and play button image.
+
+
 # Preview
 ![alt text](https://github.com/AliothCancer/Offline_Plotter_BMI/blob/main/preview/offline_plotter_1)
 ![alt text](https://github.com/AliothCancer/Offline_Plotter_BMI/blob/main/preview/offline_plotter_2)
+
+
 
 # Generic Installation
 
