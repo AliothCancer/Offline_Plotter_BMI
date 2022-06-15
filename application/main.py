@@ -19,9 +19,15 @@ import time
 from loaded_file_parsing import get_columns, get_data
 import platform
 
+
+#pg.setConfigOptions(useOpenGL=True)
+#pg.setConfigOptions(antialias=True)
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         self.path_to_img = ""
+
+
 
         MainWindow.setWindowTitle("BMI Offline Plotter")
         window_icon = QtGui.QIcon()
