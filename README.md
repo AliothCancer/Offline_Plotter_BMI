@@ -1,9 +1,9 @@
 # Installation from release
-      Download the archive in the release section for your OS, available platforms:
-            - Linux_x86_64
-            - Windows amd64
-      Once you download the archive, extract it and launch main.exe on windows or the binary main on linux.
-      Note: The images in the archive must be in the same folder to make the program load the pause and play button image.
+Download the archive in the release section for your OS, available platforms:
+      - Linux_x86_64
+      - Windows amd64
+Once you download the archive, extract it and launch main.exe on windows or the binary main on linux.
+Note: The images in the archive must be in the same folder to make the program load the pause and play button image.
 
 
 # Preview
